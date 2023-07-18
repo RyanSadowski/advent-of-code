@@ -1,45 +1,31 @@
-pub fn process_part2(input: &str) -> bool {
-    //
-    //    It contains a pair of any two letters that appears at least twice in the string without overlapping, like xyxy (xy) or aabcdefgaa (aa), but not like aaa (aa, but it overlaps).
-    //  It contains at least one letter which repeats with exactly one letter between them, like xyx, abcdefeghi (efe), or even aaa.
-    //
-    if input.len() < 3 {
-        return false;
-    }
-    let chars: Vec<char> = input.chars().collect();
-    let mut prev = chars[1];
-    let mut prev_prev = chars[0];
-    let mut sec_condition = false;
-    let mut first_condition = false;
+use std::str;
 
-    let mut dubz: Vec<&str> = Vec::new();
+fn pairs(input: &str) -> bool {
+    // check for pair of any two letters that appears at least twice
+    let indices: Vec<_> = input.char_indices().map(|(i, _)| i).collect();
 
-    // list of doubles and a lagging pointer?
+    for i in 0..=(indices.len() - 4) {
+        let pair = &input[indices[i]..indices[i + 2]];
+        let tail = &input[indices[i + 2]..];
 
-    for (i, char) in chars.iter().enumerate().skip(2) {
-        let current = *char;
-
-        if prev_prev == current && prev != current {
-            sec_condition = true;
+        if tail.contains(pair) {
+            return true;
         }
-
-        {
-            if prev_prev != current && prev == current {
-                let seg = String::from(prev) + &String::from(current);
-                let seg_ref: &str = Box::leak(seg.into_boxed_str());
-                if dubz.iter().any(|&s| s == seg_ref) {
-                    first_condition = true;
-                } else {
-                    dubz.push(seg_ref);
-                }
-            }
-        } // End of the scope block
-
-        prev_prev = prev;
-        prev = current;
     }
 
-    return sec_condition && first_condition;
+    false
+}
+
+fn repeat_between(input: &str) -> bool {
+    input
+        .chars()
+        .zip(input.chars().skip(2))
+        .any(|(a, b)| a == b)
+}
+
+
+pub fn process_part2(input: &str) -> bool {
+    pairs(input) && repeat_between(input)
 }
 
 pub fn process_part1(input: &str) -> bool {
