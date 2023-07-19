@@ -1,18 +1,17 @@
-use day5::process_part1;
+use day6::process_part1;
+use aoc_utils::read_file_to_vec;
 use std::fs::File;
 use std::io::{BufRead, BufReader};
 
 fn main() {
-    let file = File::open("input.txt").expect("Failed to open file");
-    let reader = BufReader::new(file);
-    let mut sum = 0;
-
-    for line in reader.lines() {
-        if let Ok(line) = line {
-            if process_part1(line.as_str()) {
-                sum = sum + 1;
-            }
+    //let file = File::open("input.txt").expect("Failed to open file");
+    match read_file_to_vec("input.txt") {
+        Ok(lines) => {
+            process_part1(lines);
+        }
+        Err(err) => {
+            eprintln!("Error: {}", err);
         }
     }
-    println!("{}", sum)
+    process_part1(&file);
 }
