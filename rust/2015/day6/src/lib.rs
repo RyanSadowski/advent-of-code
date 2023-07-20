@@ -62,6 +62,7 @@ fn get_command_enum(input: String) -> Command {
 }
 
 fn get_coordinates(input: String) -> Option<(i32, i32, i32, i32)> {
+    
     // Implement this function to extract min_x, min_y, max_x, max_y from the input
     // It will depend on the format of the input string.
     // For example, you could use regex or string splitting to extract the values.
