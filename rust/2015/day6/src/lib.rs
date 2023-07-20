@@ -62,10 +62,13 @@ fn get_command_enum(input: String) -> Command {
 }
 
 fn get_coordinates(input: String) -> Option<(i32, i32, i32, i32)> {
+    let parts: Vec<&str> = input.split(|c| c == ' ' || c == ',').collect();
+
     
-    // Implement this function to extract min_x, min_y, max_x, max_y from the input
-    // It will depend on the format of the input string.
-    // For example, you could use regex or string splitting to extract the values.
-    // For simplicity, I'm skipping the implementation here.
+
+    //toggle 461,550 through 564,900
+    //turn off 370,39 through 425,839
+
+    
     return Some((1, 2, 3, 4));
 }
