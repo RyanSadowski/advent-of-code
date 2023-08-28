@@ -1,5 +1,5 @@
 (executable
  (public_name day_02)
  (name main)
- (libraries stdio newtest base)
+ (libraries stdio base)
  (flags (:standard -w "-32-33")))
