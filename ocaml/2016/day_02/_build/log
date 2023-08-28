@@ -1,0 +1,5 @@
+# dune init proj day_02
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: /Users/ryan/Dev/aoc/ocaml/2016/day_02
+# Auto-detected concurrency: 16
