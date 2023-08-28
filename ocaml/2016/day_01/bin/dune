@@ -1,0 +1,5 @@
+(executable
+ (public_name newtest)
+ (name main)
+ (libraries stdio newtest base)
+ (flags (:standard -w "-32-33")))
