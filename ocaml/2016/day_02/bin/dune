@@ -2,4 +2,4 @@
  (public_name day_02)
  (name main)
  (libraries stdio base)
- (flags (:standard -w "-32-33")))
+ (flags (:standard -w "-32-33-27-6")))
