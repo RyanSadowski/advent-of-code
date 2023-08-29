@@ -9,8 +9,10 @@ let keypad = [|
         [|7; 8; 9|]
         |]
 
-let is_valid_position x y = 
-        x >= 0 && x < Array.length keypad && y >= 0 && y < Array.length keypad.(0)
+type position = {x: int; y: int}
+
+let is_valid_position pos = 
+        pos.x >= 0 && pos.x < Array.length keypad && pos.y >= 0 && pos.y < Array.length keypad.(0)
 
 let update_pos currentPosition char = 
         currentPosition
@@ -36,6 +38,10 @@ let () =
         if Array.length argv < 2 then
                 print_endline "Please provide a filename"
         else
-                let filename = argv.(1) in
-                let  lines = read_file_to_lines filename in
-                List.iter ~f:(printf "%s\n") lines
+        let filename = argv.(1) in
+        let lines = read_file_to_lines filename in
+        let cur_pos = {x=1; y=1} in
+        List.iter lines ~f:(fun line -> 
+            let result_pos = process line cur_pos in
+            printf "(%d, %d)\n" result_pos.x result_pos.y
+        )
