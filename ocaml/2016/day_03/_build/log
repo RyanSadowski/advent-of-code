@@ -1,0 +1,5 @@
+# dune exec day_03 bin/main.ml
+# OCAMLPARAM: unset
+# Shared cache: disabled
+# Workspace root: /home/nemo/Dev/aoc/ocaml/2016/day_03
+# Auto-detected concurrency: 4
