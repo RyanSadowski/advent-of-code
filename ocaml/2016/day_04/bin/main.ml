@@ -3,6 +3,12 @@ open Stdio
 
 let () = print_endline "Hello, AOC 2016 Day 4"
 
+type dataz = {
+        enc_name : string;
+        sector: int;
+        csum: string;
+}
+
 let read_file_to_lines filepath = 
         let ic = In_channel.create filepath in 
         let lines = In_channel.input_lines ic in
