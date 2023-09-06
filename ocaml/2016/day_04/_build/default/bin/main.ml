@@ -28,7 +28,7 @@ let parse_string s =
         begin
             match List.rev parts with
             | sector_str :: name_parts ->
-                let enc_name = String.concat ~sep:"-" (List.rev name_parts) in
+                let enc_name = String.concat ~sep:"-" (List.rev name_parts) in (* Start here, not getting the whole thing*)
                 let sector = Int.of_string sector_str in
                 let csum = bracket_content in
                 Some { enc_name; sector; csum }
@@ -37,7 +37,7 @@ let parse_string s =
     | None -> None
 
 let is_prefix_of ~smaller ~larger =
-    String.is_prefix smaller ~prefix:larger
+    String.is_prefix larger  smaller 
 
 let freq_list line = 
     let freq = Array.create ~len:256 0 in 
@@ -54,10 +54,11 @@ let freq_list line =
     ) in 
     String.concat ~sep:"" (List.map ~f:Char.to_string sorted_chars)
 
+let dataz_to_string data =
+  Printf.sprintf "enc_name: %s, sector: %d, csum: %s" data.enc_name data.sector data.csum
 
 let check_sum dataz =
     let sorted_name = freq_list dataz.enc_name in
-    printf "Sorted name: %s\n" sorted_name;
     is_prefix_of ~smaller:dataz.csum ~larger:sorted_name
 
 let rec check_sums lines valids =
@@ -66,12 +67,10 @@ let rec check_sums lines valids =
     | head :: tail -> 
         let parsed = parse_string head in
         match parsed with 
-        |Some dataz -> 
+        |Some dataz ->
+            print_endline (dataz_to_string dataz);
             if check_sum dataz then 
-                begin 
-                    print_endline "Found a valid sum!";
-                    check_sums tail (parsed :: valids )
-                end
+                check_sums tail (parsed :: valids )
             else 
                 check_sums tail valids
 
