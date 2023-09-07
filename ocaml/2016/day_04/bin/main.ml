@@ -36,7 +36,7 @@ let parse_string s =
     | None -> None
 
 let is_prefix_of ~smaller ~larger =
-    String.is_prefix larger  smaller 
+    String.is_prefix smaller ~prefix:larger
 
 let freq_list line = 
     let freq = Array.create ~len:256 0 in 
@@ -44,20 +44,26 @@ let freq_list line =
         freq.(Char.to_int ch) <- freq.(Char.to_int ch) + 1);
     freq.(Char.to_int '-') <- 0;
     let sorted_chars = List.init 256 ~f:(fun i -> Char.of_int i |> Option.value_exn) in 
+    let sorted_chars = List.filter sorted_chars ~f:(fun ch ->
+        freq.(Char.to_int ch) > 0
+    ) in
     let sorted_chars = List.sort sorted_chars ~compare:(fun a b ->
         let freq_comparison = compare freq.(Char.to_int b) freq.(Char.to_int a) in
         if freq_comparison = 0 then
             Char.compare a b
         else
             freq_comparison
-    ) in 
+    ) in
+    let sorted_chars = List.take sorted_chars 5 in
     String.concat ~sep:"" (List.map ~f:Char.to_string sorted_chars)
 
+
 let dataz_to_string data =
-  Printf.sprintf "enc_name: %s, sector: %d, csum: %s" data.enc_name data.sector data.csum
+  Printf.sprintf "enc_name: %s, sector: %d, csum: %s" data.enc_name data.sector data.csum 
 
 let check_sum dataz =
     let sorted_name = freq_list dataz.enc_name in
+    print_endline sorted_name; 
     is_prefix_of ~smaller:dataz.csum ~larger:sorted_name
 
 let rec check_sums lines valids =
@@ -68,14 +74,21 @@ let rec check_sums lines valids =
         match parsed with 
         |Some dataz ->
             print_endline (dataz_to_string dataz);
-            if check_sum dataz then 
-                check_sums tail (parsed :: valids )
-            else 
+            if check_sum dataz then begin
+                print_endline "hit";
+                check_sums tail (dataz :: valids)
+            end else 
                 check_sums tail valids
-
         | None ->
             print_endline("rip");
             check_sums tail valids
+
+let rec get_zums listy sum = 
+    match listy with
+    | [] -> sum
+    | head :: tail -> 
+       get_zums tail (sum + head.sector)
+
 
 let () = 
     let argv = Sys.get_argv () in
@@ -85,4 +98,5 @@ let () =
         let filename = argv.(1) in
         let lines = read_file_to_lines filename in
         let validz = check_sums lines [] in
-        printf "list length = %d\n valid sumz = %d\n" (List.length lines) (List.length validz)
+        let zum = get_zums validz 0 in
+        printf "list length = %d\nvalid sumz = %d\nzum = %d\n" (List.length lines) (List.length validz) zum
