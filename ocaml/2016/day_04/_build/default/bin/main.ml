@@ -58,12 +58,8 @@ let freq_list line =
     String.concat ~sep:"" (List.map ~f:Char.to_string sorted_chars)
 
 
-let dataz_to_string data =
-  Printf.sprintf "enc_name: %s, sector: %d, csum: %s" data.enc_name data.sector data.csum 
-
 let check_sum dataz =
     let sorted_name = freq_list dataz.enc_name in
-    print_endline sorted_name; 
     is_prefix_of ~smaller:dataz.csum ~larger:sorted_name
 
 let rec check_sums lines valids =
@@ -73,9 +69,7 @@ let rec check_sums lines valids =
         let parsed = parse_string head in
         match parsed with 
         |Some dataz ->
-            print_endline (dataz_to_string dataz);
             if check_sum dataz then begin
-                print_endline "hit";
                 check_sums tail (dataz :: valids)
             end else 
                 check_sums tail valids
@@ -89,14 +83,39 @@ let rec get_zums listy sum =
     | head :: tail -> 
        get_zums tail (sum + head.sector)
 
+(* 97 - 122  *)
+let wrap_ascii_lower n =
+    if n > 122 then n - 26
+    else n
+
+let increment_char c n =
+    let sum = (Char.to_int c + n) in
+    let sum = wrap_ascii_lower sum in 
+    Char.of_int_exn sum
+
+let increment_string s n =
+  String.map s ~f:(fun c -> 
+        match c with 
+            | '-' -> ' '
+            | _ -> increment_char c n)
+
+let rec validatorz datazs = 
+    match datazs with 
+    | [] -> 1
+    | head :: tail ->
+        let remainder = head.sector % 26 in
+        let decrypted = increment_string head.enc_name remainder in
+        printf "sector %d \tmoves %d \tenc %-*s \tsolved %-*s\n" head.sector remainder 70 head.enc_name 70 decrypted; 
+        validatorz tail
 
 let () = 
     let argv = Sys.get_argv () in
-    if Array.length argv < 2 then
+    if Array.length argv < 2 then 
         print_endline "Please provide a filename"
     else
         let filename = argv.(1) in
         let lines = read_file_to_lines filename in
         let validz = check_sums lines [] in
         let zum = get_zums validz 0 in
+        let num = validatorz validz in
         printf "list length = %d\nvalid sumz = %d\nzum = %d\n" (List.length lines) (List.length validz) zum
