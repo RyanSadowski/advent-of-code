@@ -1,0 +1,5 @@
+(executable
+ (public_name day_05)
+ (name main)
+ (libraries stdio)
+ (flags (:standard -w "-32-33")))
